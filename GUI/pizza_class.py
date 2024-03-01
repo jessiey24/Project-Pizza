@@ -4,8 +4,9 @@ from PIL import ImageTk, Image
 class ProjectPizza:
     font_tuple = ("Times New Roman", 40, "normal") #Title font for main page
     font_tuple2 = ("Times New Roman", 20, "italic") #Subtitle font for the company motto
-    font_tuple3 = ("Times New Roman",12, "normal") #Font for the other page titles 
+    font_tuple3 = ("Times New Roman",12, "normal") #Font for the order page titles 
     font_tuple4 = ("Times New Roman", 10, "italic") #headings for different instructions/choices
+    font_tuple5 = ("Times New Roman",20, "normal")
 
     def __init__(self, master, title, iconbitmap, geometry, configure): #attributes all windows will have
         self.master = master

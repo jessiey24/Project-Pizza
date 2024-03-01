@@ -90,6 +90,8 @@ class OrderPage(ProjectPizza):
       elif response == messagebox.NO:
         # Set all values to default
         self.setDefaultPizzaOptions()
+
+
     def goToCart(self): #initiliazation of Cart Page 
        cartPage = CartPage(Toplevel(), 'Project Pizza Cart Page', 'pizzaIcon.ico', "600x600", {"bg": "#fae5cf"}, 
                            order = self.order,
@@ -98,6 +100,7 @@ class OrderPage(ProjectPizza):
                            crust = self.crust,
                            selected_toppings = self.selected_toppings,
                            pizza_details = self.pizza_details )  
+       self.master.destroy()
 
       
     def create_widgets(self):
@@ -225,6 +228,7 @@ class OrderPage(ProjectPizza):
 
 
         #add to cart button
+        # I will also add some sort of functionality with adding the pizza to the cart with backend info if I can't get the list thing to work out
         self.addToCart = Button( self.master, text="Add to cart",command = self.addToOrder, bg="#d65738", fg="#fae5cf", padx=30, pady=10)
         self.addToCart.grid(column= 2, row = 5)
 
