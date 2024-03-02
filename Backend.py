@@ -1,13 +1,19 @@
 import sqlite3
-from Pizza_Types import Pizza
 
 
-def add_to_cart(pizza: Pizza) -> None:
+def add_to_cart(pizza_details: list[str, any]) -> None:
     """
     Add a pizza to the cart.
 
-    @param pizza: The pizza to add (note: the Pizza class can be found in Pizza_Types.py)
+    @param pizza_details: Details of new pizza. This list must be in this format:
+    {
+        'size': 'Small' | 'Medium' | 'Large',
+        'crust': 'Hand Tossed' | 'Thin 'n' Crispy' | 'Stuffed Crust',
+        'toppings': list['Pepperoni' | 'Sausage' | 'Ham' | 'Onion' | 'Mushroom' | 'Green Bell Pepper' | 'Black Olives' | 'Jalapeno' | 'Banana Pepper'],
+        'price': float
+    }
     """
+
     # add row to cart table
     pass
 
@@ -23,13 +29,29 @@ def remove_from_cart(index: int) -> None:
     pass
 
 
-def get_cart() -> list[Pizza]:
+def get_cart() -> list[list[str, any]]:
     """
-    Returns a list of all pizzas in the cart.
+    Returns a list of all pizzas in the cart in this format:
+    [
+        {
+            'size': 'Small' | 'Medium' | 'Large',
+            'crust': 'Hand Tossed' | 'Thin 'n' Crispy' | 'Stuffed Crust',
+            'toppings': list['Pepperoni' | 'Sausage' | 'Ham' | 'Onion' | 'Mushroom' | 'Green Bell Pepper' | 'Black Olives' | 'Jalapeno' | 'Banana Pepper'],
+            'price': float
+        },
+        ...
+    ]
     """
     # return rows form cart table
 
-    return Pizza("medium", "tossed", ["Pepperoni", "Sausage", "Ham"])
+    test_pizza = {
+        'size': 'Small',  
+        'crust': 'Hand Tossed',  
+        'toppings': ['Pepperoni', 'Sausage', 'Onion'],
+        'price': 14.99
+    }
+
+    return [test_pizza]
 
 
 def add_payment_method():
