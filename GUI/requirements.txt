@@ -1,4 +1,10 @@
+<<<<<<< HEAD
 Pillow = 10.2.0 
 #Installation Instructions
     # go on bash/command line
+=======
+Pillow = 10.2.0 
+#Installation Instructions
+    # go on bash/command line
+>>>>>>> b904bca1c91b971298bf0626ceb752ae36faf2a4
     # pip install pillow
