@@ -3,6 +3,8 @@ from PIL import ImageTk, Image
 from pizza_class import *
 from tkinter import messagebox
 from CartPageGUI import *
+from __init__ import *
+
 #class definition for order page
 class OrderPage(ProjectPizza):
     def __init__(self, master, title, iconbitmap, geometry, configure):
@@ -84,7 +86,8 @@ class OrderPage(ProjectPizza):
         }
         # Append the pizza details to the order list
         self.order.append(self.pizza_details)
-     
+        #add pizza to cart 
+        add_to_cart(self.pizza_details)
         # Set all values to default
         self.setDefaultPizzaOptions()
       elif response == messagebox.NO:
@@ -134,7 +137,7 @@ class OrderPage(ProjectPizza):
       
         #dropdown menu implementation for pizza size
         self.sizeOptions = OptionMenu(self.master, self.size_clicked, "Small +$7.99", "Medium +$10.99","Large +$14.99")
-        self.sizeOptions.grid(column = 1, row= 4)\
+        self.sizeOptions.grid(column = 1, row= 4)
         #if-else statements that carry pizza size to next page
         if self.size_clicked =="Small +$7.99":
             self.price += 7.99
