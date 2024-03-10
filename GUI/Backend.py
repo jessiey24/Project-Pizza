@@ -1,23 +1,79 @@
 import sqlite3
 
+
 class CustomerInfo:
-    def __init__(self, phone_num, first_name, last_name):
+    def __init__(self, phone_num: str, first_name: str, last_name: str):
         self.phone_num = phone_num
         self.first_name = first_name
-        self.last_name = last_name
+        self.last_name  = last_name
 
 
-def add_to_cart(pizza_details: list[str, any]) -> None:
+class PizzaDetails:
+    def __init__(self, size: str, crust: str, toppings: list[str]):
+        # Make sure provided values are valid
+        if not self.is_valid_size(size):
+            raise Exception(f'Error creating PizzaDetails: "{size}" is not a valid size name. Valid sizes are "Lage", "Medium", and "Small".')
+        if not self.is_valid_crust(crust):
+            raise Exception(f'Error creating PizzaDetails: "{crust}" is not a valid crust name. Valid crust names are "Hand Tossed", "Thin \'n\' Crispy", and "Stuffed Crust".')
+        if not self.are_valid_toppings(toppings):
+            raise Exception('Error creating PizzaDetails: One of the toppings has an invalid name')
+        
+        self.size = size
+        self.crust = crust
+        self.toppings = toppings
+
+    def __str__(self) -> str:
+        toppings_str = ''
+
+        first = False
+        for topping in self.toppings:
+            if not first:
+                first = True
+            else:
+                toppings_str += ', '
+
+            toppings_str += topping 
+
+        return f'{self.size}, {self.crust} w/ {toppings_str}'
+        pass
+
+    def get_price(self) -> float:
+        price = 0.0
+
+        if self.size == 'Small':
+            price += 7.99
+        elif self.size == 'Medium':
+            price += 10.99
+        elif self.size == 'Large':
+            price += 14.99
+        
+        price += self.toppings.__len__() * 0.25
+
+        if self.crust == 'Stuffed Crust':
+            price += 3.99
+
+        return price
+
+    def is_valid_size(self, size: str):
+        return size == 'Small' or size == 'Medium' or size == 'Large'
+
+    def is_valid_crust(self, crust: str):
+        return crust == 'Hand Tossed' or crust == "Thin 'n' Crispy" or crust == 'Stuffed Crust'
+
+    def is_valid_topping(self, topping: str):
+        return topping == 'Pepperoni' or topping == 'Sausage' or topping == 'Ham' or topping == 'Onion' or topping == 'Mushroom' or topping == 'Green Bell Pepper' or topping == 'Black Olives' or topping == 'Jalapeno' or topping == 'Banana Pepper'
+
+    def are_valid_toppings(self, toppings: list[str]):
+        for topping in toppings:
+            if not self.is_valid_topping(topping):
+                return False
+            
+        return True
+
+
+def add_to_cart(pizza_details: PizzaDetails) -> None:
     """
     Add a pizza to the cart.
-
-    @param pizza_details: Details of new pizza. This list must be in this format:
-    {
-        'size': 'Small' | 'Medium' | 'Large',
-        'crust': 'Hand Tossed' | 'Thin 'n' Crispy' | 'Stuffed Crust',
-        'toppings': list['Pepperoni' | 'Sausage' | 'Ham' | 'Onion' | 'Mushroom' | 'Green Bell Pepper' | 'Black Olives' | 'Jalapeno' | 'Banana Pepper'],
-        'price': float
-    }
     """
 
     # Open DB connection
@@ -26,10 +82,7 @@ def add_to_cart(pizza_details: list[str, any]) -> None:
 
     try:
         # Insert into pizzas
-        Size = pizza_details['size']
-        Crust = pizza_details['crust']
-        Price = pizza_details['price']
-        cursor.execute(f'INSERT INTO Pizzas (Size, Crust, Price) VALUES ("{Size}", "{Crust}", {Price})')
+        cursor.execute(f'INSERT INTO Pizzas (Size, Crust, Price) VALUES ("{pizza_details.size}", "{pizza_details.crust}", {pizza_details.get_price()})')
 
         # Get id of the new pizza
         cursor.execute('SELECT PizzaId FROM Pizzas')
@@ -41,13 +94,13 @@ def add_to_cart(pizza_details: list[str, any]) -> None:
         cursor.execute(f'INSERT INTO PizzasInCart (PizzaId) VALUES ({PizzaId})')
 
         # Insert into toppings
-        for Name in pizza_details['toppings']:
-            cursor.execute(f'INSERT INTO Toppings (PizzaId, Name) VALUES ({PizzaId}, "{Name}")')
+        for topping in pizza_details.toppings:
+            cursor.execute(f'INSERT INTO Toppings (PizzaId, Name) VALUES ({PizzaId}, "{topping}")')
 
         # Commit and close
         con.commit()
-    except Exception:
-        print(f'Error adding pizza to cart: {Exception}')
+    except Exception as e:
+        print(f'Error adding pizza to cart: {e}')
 
         # Discard database changes
         con.rollback()
@@ -90,8 +143,8 @@ def remove_from_cart(index: int) -> None:
 
         # Commit and close
         con.commit()
-    except:
-        print('Error removing pizza from cart')
+    except Exception as e:
+        print(f'Error removing pizza from cart: {e}')
 
         # Discard database changes
         con.rollback()
@@ -100,23 +153,12 @@ def remove_from_cart(index: int) -> None:
     con.close()
 
 
-def get_cart() -> list[list[str, any]]:
+def get_cart() -> list[PizzaDetails]:
     """
-    Returns a list of all pizzas in the cart in this format:
-
-    [
-        {
-            'size': 'Small' | 'Medium' | 'Large',
-            'crust': 'Hand Tossed' | 'Thin 'n' Crispy' | 'Stuffed Crust',
-            'toppings': list['Pepperoni' | 'Sausage' | 'Ham' | 'Onion' | 'Mushroom' | 'Green Bell Pepper' | 'Black Olives' | 'Jalapeno' | 'Banana Pepper'],
-            'price': float
-        },
-
-        ...
-    ]
+    Returns a list of all pizzas in the cart.
     """
 
-    output = []
+    output: list[PizzaDetails] = []
 
     # Open DB connection
     con = sqlite3.connect("Data.db")
@@ -127,29 +169,22 @@ def get_cart() -> list[list[str, any]]:
     rows = cursor.fetchall()
 
     # Assemble pizza details for each pizza
-    for row in rows:
-        PizzaId = row[0]
+    for cart_row in rows:
+        PizzaId = cart_row[0]
 
-        # Select from Pizzas table
+        # Select pizza from Pizzas table
         cursor.execute(f'SELECT Size, Crust, Price FROM Pizzas WHERE PizzaId={PizzaId}')
-        row = cursor.fetchone()
-
-        # Setup this pizza's details
-        pizza_details = {
-            'size': row[0],
-            'crust': row[1],
-            'toppings': [],
-            'price': row[2]
-        }
+        pizza_row = cursor.fetchone()
 
         # Select from Toppings table
+        toppings: list[str] = []
         cursor.execute(f'SELECT Name FROM Toppings WHERE PizzaId={PizzaId}')
-        toppings = cursor.fetchall()
-        for topping in toppings:
-            pizza_details['toppings'].append(topping[0])
+        toppings_rows = cursor.fetchall()
+        for toppings_row in toppings_rows:
+            toppings.append(toppings_row[0])
 
         # Add pizza to output list
-        output.append(pizza_details)
+        output.append(PizzaDetails(pizza_row[0], pizza_row[1], toppings))
 
     # Close database
     con.close()
@@ -166,66 +201,42 @@ def purchase_cart(customerInfo: CustomerInfo) -> None:
     con = sqlite3.connect("Data.db")
     cursor = con.cursor()
 
-    #try:
-        # ----- Move contents of cart to an order -----
-
+    try:
         # Insert customer
-    data = (customerInfo.phone_num, customerInfo.first_name, customerInfo.last_name)
-    cursor.execute('INSERT INTO Customers (PhoneNum, FirstName, LastName) VALUES (?, ?, ?)', data)
+        data = (customerInfo.phone_num, customerInfo.first_name, customerInfo.last_name)
+        cursor.execute('INSERT INTO Customers (PhoneNum, FirstName, LastName) VALUES (?, ?, ?)', data)
 
-    # Inset order
-    cursor.execute(f'INSERT INTO Orders (Total, PhoneNum) VALUES (-1, {customerInfo.phone_num})')
+        # Inset order
+        cursor.execute(f'INSERT INTO Orders (Total, PhoneNum) VALUES (-1, {customerInfo.phone_num})')
 
-    # Get new order id
-    cursor.execute('SELECT OrderId FROM Orders')
-    rows = cursor.fetchall()
-    last = rows[rows.__len__() - 1]
-    OrderId = last[0]
+        # Get new order id
+        cursor.execute('SELECT OrderId FROM Orders')
+        rows = cursor.fetchall()
+        last = rows[rows.__len__() - 1]
+        OrderId = last[0]
 
-    # Select pizzas in cart
-    cursor.execute('SELECT PizzaId FROM PizzasInCart')
-    rows = cursor.fetchall()
+        # Select pizzas in cart
+        cursor.execute('SELECT PizzaId FROM PizzasInCart')
+        rows = cursor.fetchall()
 
-    # Insert pizzas in order
-    for row in rows:
-        PizzaId = row[0]
-        cursor.execute(f'INSERT INTO PizzasInOrder (OrderId, PizzaId) VALUES ({OrderId}, {PizzaId})')
+        # Insert pizzas in order
+        for row in rows:
+            PizzaId = row[0]
+            cursor.execute(f'INSERT INTO PizzasInOrder (OrderId, PizzaId) VALUES ({OrderId}, {PizzaId})')
 
-    # Remove pizzas in cart
-    cursor.execute('DELETE FROM PizzasInCart')
+        # Remove pizzas in cart
+        cursor.execute('DELETE FROM PizzasInCart')
 
-    # Commit and close
-    con.commit()
-    '''except Exception as e:
+        # Commit and close
+        con.commit()
+    except Exception as e:
         print(f'Error purchasing cart: {e}')
 
         # Discard database changes
-        con.rollback()'''
+        con.rollback()
 
     # Close database
     con.close()
-
-
-def calculate_price(pizza_details: list[str, any]) -> float:
-    '''
-    Calculates the price of a pizza based on its size and number of toppings.
-    '''
-
-    total = 0.0
-    size = pizza_details['size']
-
-    if size == 'Small':
-        total += 7.99
-    elif size == 'Medium':
-        total += 10.99
-    elif size == 'Large':
-        total += 14.99
-    else:
-        print(f'Error calculating price: {size} is not a recognized size')
-    
-    total += pizza_details['toppings'].__len__() * 0.25
-
-    return total
 
 
 def init_db():
@@ -312,7 +323,6 @@ def init_db():
     con.close()
 
     print("Database initialized")
-
 
 # Automatically initialize the database on import
 init_db()
