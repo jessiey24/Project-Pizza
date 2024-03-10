@@ -10,8 +10,9 @@ class CarryoutPage(ProjectPizza):
         super().__init__(master, title, iconbitmap, geometry, configure)
         self.create_widgets()
     def completeOrder(self):
-        purchase_cart()
-        
+       
+            purchase_cart()
+            allDone=messagebox.showinfo("OrderConfirmed", "Your order has been placed!")
             
     def create_widgets(self):
     # add info frame

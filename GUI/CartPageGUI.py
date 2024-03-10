@@ -1,7 +1,6 @@
 from tkinter import *
 from PIL import ImageTk, Image
 from pizza_class import *
-from DeliveryCheckout import *
 from CarryoutPage import *
 from __init__ import *
 class CartPage(ProjectPizza):
@@ -21,10 +20,7 @@ class CartPage(ProjectPizza):
          resized_pizzaIcon = pizzaIcon.resize((80, 80))
          final_pizzaIcon = ImageTk.PhotoImage(resized_pizzaIcon)
 
-    def deliveryChkout(self):
-        DeliveryCheckout = DeliveryPage(Toplevel(), 'Project Pizza Checkout Page', 'pizzaIcon.ico', "600x600", {"bg": "#fae5cf"} )  
-        self.master.withdraw()
-
+    
     def carryoutChkout(self):
         carryOutCheckout = CarryoutPage(Toplevel(), 'Project Pizza Checkout Page', 'pizzaIcon.ico', "600x600", {"bg": "#fae5cf"} )  
         self.master.withdraw()
@@ -52,8 +48,6 @@ class CartPage(ProjectPizza):
         self.currentPrice = LabelFrame(self.master, font=self.font_tuple5, text="Total:", fg="#d65738", bg="#fae5cf", padx = 50, pady = 150)
         self.currentPrice.grid(column=2, row=2)
         self.ListPrice = Label(self.currentPrice, font=self.font_tuple5, text="List price here", fg="#d65738", bg="#fae5cf", anchor = N )
-        self.ListPrice.grid(column = 1, row = 1, columnspan= 2, rowspan = 3)
-        self.chooseDelivery = Button(self.currentPrice, font=self.font_tuple3, text="Delivery ", command = self.deliveryChkout, fg="#fae5cf", bg="#d65738", anchor = SW )
-        self.chooseDelivery.grid(column = 1, row=4)
+        self.ListPrice.grid(column = 1, row = 1, columnspan= 2, rowspan = 3) 
         self.chooseCarryout = Button(self.currentPrice, font=self.font_tuple3, text="Carry-out", command = self.carryoutChkout ,fg="#fae5cf", bg="#d65738", anchor = SE )
         self.chooseCarryout.grid(column = 2, row=4)
