@@ -28,13 +28,14 @@ class PizzaDetails:
         first = False
         for topping in self.toppings:
             if not first:
+                toppings_str += ' w/ '
                 first = True
             else:
                 toppings_str += ', '
 
             toppings_str += topping 
 
-        return f'{self.size}, {self.crust} w/ {toppings_str}'
+        return f'{self.size}, {self.crust}' + toppings_str
         pass
 
     def get_price(self) -> float:
@@ -201,13 +202,18 @@ def purchase_cart(customerInfo: CustomerInfo) -> None:
     con = sqlite3.connect("Data.db")
     cursor = con.cursor()
 
+    # Get total cost of cart
+    total = 0.0
+    for pizza in get_cart():
+        total += pizza.get_price()
+
     try:
         # Insert customer
         data = (customerInfo.phone_num, customerInfo.first_name, customerInfo.last_name)
         cursor.execute('INSERT INTO Customers (PhoneNum, FirstName, LastName) VALUES (?, ?, ?)', data)
 
         # Inset order
-        cursor.execute(f'INSERT INTO Orders (Total, PhoneNum) VALUES (-1, {customerInfo.phone_num})')
+        cursor.execute(f'INSERT INTO Orders (Total, PhoneNum) VALUES ({total}, {customerInfo.phone_num})')
 
         # Get new order id
         cursor.execute('SELECT OrderId FROM Orders')

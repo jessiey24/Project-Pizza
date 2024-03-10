@@ -10,34 +10,39 @@ class CarryoutPage(ProjectPizza):
         super().__init__(master, title, iconbitmap, geometry, configure)
         self.create_widgets()
     def completeOrder(self):
-       
-            purchase_cart(CustomerInfo(1234567890, 'John', 'Doe'))
-            allDone=messagebox.showinfo("OrderConfirmed", "Your order has been placed!")
+        # Store provide customer information in a CustomerInfo object
+        customer_info = CustomerInfo(self.phone_number_entry.get(), self.first_name_entry.get(), self.last_name_entry.get())
+        purchase_cart(customer_info)
+        allDone=messagebox.showinfo("OrderConfirmed", "Your order has been placed!")
             
     def create_widgets(self):
-    # add info frame
+        # add info frame
         self.checkoutframe= LabelFrame(self.master,font=self.font_tuple5, text="Customer Information:", fg="#d65738", bg="#fae5cf", padx =25, pady = 25)
         self.checkoutframe.grid(column=1, row=1)
-    # first name entry creation
+        # first name entry creation
         self.first_name_label = Label(self.checkoutframe, text="First Name:", font=self.font_tuple3, fg="#d65738", bg="#fae5cf")
         self.first_name_label.grid(row=1, column=1, pady=5, padx=10)
         self.first_name_entry =  Entry(self.checkoutframe)
         self.first_name_entry.grid(row=1, column=2, pady=5, padx=10)
-    # last name entry creation
+        # last name entry creation
         self.last_name_label = Label(self.checkoutframe, text="Last Name:", font=self.font_tuple3, fg="#d65738", bg="#fae5cf")
         self.last_name_label.grid(row=2, column=1, pady=5, padx=10)
-        self.last_name_entry = Entry(self.checkoutframe)
+        self.last_name_entry = Entry(self.checkoutframe, )
         self.last_name_entry.grid(row=2, column=2, pady=5, padx=10)
-    # phone number entry creation
+        # phone number entry creation
         self.phone_number_label = Label(self.checkoutframe, text = "Enter phone number (########## format): ", font=self.font_tuple3, fg="#d65738", bg="#fae5cf")
         self.phone_number_label.grid(row=3, column=1, pady=5, padx=10)
-        self.last_name_entry = Entry(self.checkoutframe)
-        self.last_name_entry.grid(row=3, column=2, pady=5, padx=10)
-    #confirm order frame
+        self.phone_number_entry = Entry(self.checkoutframe)
+        self.phone_number_entry.grid(row=3, column=2, pady=5, padx=10)
+        #confirm order frame
         self.confirmOrderFrame = LabelFrame(self.master,font=self.font_tuple5, text="Confirm order :", fg="#d65738", bg="#fae5cf", padx =25, pady = 50)
         self.confirmOrderFrame.grid(column= 1, row=2)
-    #show price
-        self.show_price_label = Label(self.confirmOrderFrame, text="price breakdown will be here", font=self.font_tuple3, fg="#d65738", bg="#fae5cf").pack()
+        #get total price
+        total = 0.0
+        for pizza in get_cart():
+            total += pizza.get_price()
+        #show price
+        self.show_price_label = Label(self.confirmOrderFrame, text=f'${'{:0.2f}'.format(total)}', font=self.font_tuple3, fg="#d65738", bg="#fae5cf").pack()
         #confirm order button 
         self.confirmOrder = Button(self.confirmOrderFrame, text="Place Order", command = self.completeOrder, font=self.font_tuple3, fg="#fae5cf", bg="#d65738").pack()
         
