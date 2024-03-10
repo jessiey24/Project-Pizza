@@ -2,7 +2,7 @@ from tkinter import *
 from PIL import ImageTk, Image
 from pizza_class import *
 from tkinter import messagebox
-from __init__ import *
+from Backend import *
 
 
 class CarryoutPage(ProjectPizza):
@@ -11,7 +11,7 @@ class CarryoutPage(ProjectPizza):
         self.create_widgets()
     def completeOrder(self):
        
-            purchase_cart()
+            purchase_cart(CustomerInfo(1234567890, 'John', 'Doe'))
             allDone=messagebox.showinfo("OrderConfirmed", "Your order has been placed!")
             
     def create_widgets(self):

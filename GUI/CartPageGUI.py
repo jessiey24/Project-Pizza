@@ -2,7 +2,7 @@ from tkinter import *
 from PIL import ImageTk, Image
 from pizza_class import *
 from CarryoutPage import *
-from __init__ import *
+from Backend import *
 class CartPage(ProjectPizza):
     def __init__(self, master, title, iconbitmap, geometry, configure, order, price, size, crust, selected_toppings, pizza_details):
         super().__init__(master, title, iconbitmap, geometry, configure)

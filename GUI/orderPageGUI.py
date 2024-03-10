@@ -3,7 +3,7 @@ from PIL import ImageTk, Image
 from pizza_class import *
 from tkinter import messagebox
 from CartPageGUI import *
-from __init__ import *
+from Backend import *
 
 #class definition for order page
 class OrderPage(ProjectPizza):
